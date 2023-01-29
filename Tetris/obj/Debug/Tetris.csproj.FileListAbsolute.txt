@@ -1,0 +1,11 @@
+C:\Users\young\Desktop\uni year 2\c#\tetris\Tetris\obj\Debug\Tetris.csproj.AssemblyReference.cache
+C:\Users\young\Desktop\uni year 2\c#\tetris\Tetris\obj\Debug\Tetris.csproj.SuggestedBindingRedirects.cache
+C:\Users\young\Desktop\uni year 2\c#\tetris\Tetris\obj\Debug\Tetris.Form1.resources
+C:\Users\young\Desktop\uni year 2\c#\tetris\Tetris\obj\Debug\Tetris.Properties.Resources.resources
+C:\Users\young\Desktop\uni year 2\c#\tetris\Tetris\obj\Debug\Tetris.csproj.GenerateResource.cache
+C:\Users\young\Desktop\uni year 2\c#\tetris\Tetris\obj\Debug\Tetris.csproj.CoreCompileInputs.cache
+C:\Users\young\Desktop\uni year 2\c#\tetris\Tetris\bin\Debug\Tetris.exe.config
+C:\Users\young\Desktop\uni year 2\c#\tetris\Tetris\bin\Debug\Tetris.exe
+C:\Users\young\Desktop\uni year 2\c#\tetris\Tetris\bin\Debug\Tetris.pdb
+C:\Users\young\Desktop\uni year 2\c#\tetris\Tetris\obj\Debug\Tetris.exe
+C:\Users\young\Desktop\uni year 2\c#\tetris\Tetris\obj\Debug\Tetris.pdb
