@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -40,6 +41,25 @@ namespace Tetris
             scoreLbl.Text = "Score: " + score;
             scoreLbl.SetBounds(500,60,60,60);
             Controls.Add(scoreLbl);
+
+            // GAME START
+
+            // Creates a new block at the top of the grid.
+            gridBtn = CreateNewBlock(gridBtn);
+        }
+
+        Button[,] CreateNewBlock(Button[,] grid)
+        {
+            Button insertLocation = grid[4, 0];
+            // Buttons
+
+            //Square
+            public int[,] SquareData;
+
+                //Insert square
+            
+            
+            return grid;
         }
 
         void btnEvent_Click(object sender, EventArgs e)
