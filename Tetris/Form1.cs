@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -13,20 +14,32 @@ namespace Tetris
 {
     public partial class Form1 : Form
     {
-        public static int xLength = 10;
-        private static int yLength = 20;
-        Button[,] gridBtn = new Button[xLength,yLength];
+        public static int gridColumns = 10;
+        public static int gridWidth = 10;
+        public static int gridRows = 20;
+        public static int gridHeight = 20;
+        Button[,] gridBtn = new Button[gridColumns,gridRows];
         Label scoreLbl = new Label();
         public int score = 0;
 
-        public int BlockStartX = xLength / 2 - 1; // 4, start blocks here and build out right.
+        readonly Color[] colorList =
+        {
+            Color.CadetBlue, // I Block
+            Color.Salmon, // L Block
+            Color.DarkOliveGreen, // J Block
+            Color.LightGreen, // S Block
+            Color.Orange, // Z Block
+            Color.Pink, // O Block
+            Color.Orchid // T Block
+        };
+
+        public int BlockStartX = gridWidth / 2 - 1; // 4, start blocks here and build out right.
         public int BlockStartY = 0; // Top of grid
         public Form1()
         {
             InitializeComponent();
 
             // Variables
-            
 
             // Initialise Grid
             for (int x = 0; x < gridBtn.GetLength(0); x++) 
@@ -55,31 +68,42 @@ namespace Tetris
             // Creates a new block at the top of the grid.
 
             // Square
+            DrawOBlock(BlockStartX, BlockStartY);
 
-            for (int x = 0; x < 2; x++)
+            Thread.Sleep(1000);
+            MoveRowsDown(1, 2);
+
+        }
+
+        public void DrawOBlock(int drawX, int drawY)
+        {
+            int width = 2;
+            int height = 2;
+            for (int x = 0; x < width; x++)
             {
-                for (int y = 0; y < 2; y++)
+                for (int y = 0; y < height; y++)
                 {
-                    gridBtn[BlockStartX+x, BlockStartY+y].BackColor = Color.Coral;
+                    gridBtn[drawX + x, drawY + y].BackColor = colorList[5];
                 }
             }
-
         }
 
-        private void ClearRow(int x)
+        private void ClearRow(int row)
         {
-            for (int y = 0; y < yLength; y++)
+            for (int x = 0; x < gridColumns; x++)
             {
-                gridBtn[x,y].BackColor = Color.PowderBlue;
+                gridBtn[x,row].BackColor = Color.PowderBlue;
             }
         }
 
-        private void MoveDown(int x, int numRows)
+        private void MoveRowsDown(int row, int numRows)
         {
-            for (int y = 0; y < yLength; y++)
+            for (int x = 0; x < gridColumns; x++)
             {
-                gridBtn[x + numRows, y] = gridBtn[x,y];
-                gridBtn[x, y].BackColor = Color.PowderBlue;
+                Console.WriteLine(row + "  " + x);
+                Color setColor = gridBtn[row, x].BackColor;
+                gridBtn[row + numRows, x].BackColor = setColor;
+                gridBtn[row, x].BackColor = Color.PowderBlue;
             }
         }
 
@@ -87,7 +111,7 @@ namespace Tetris
         {
             int cleared = 0;
 
-            for (int x = xLength - 1; x >= 0; x--)
+            for (int x = gridColumns - 1; x >= 0; x--)
             {
                 if (IsRowFull(x))
                 {
@@ -95,7 +119,7 @@ namespace Tetris
                     cleared++;
                 } else if (cleared > 0)
                 {
-                    MoveDown(x, cleared);
+                    MoveRowsDown(x, cleared);
                 }
             }
 
@@ -104,7 +128,7 @@ namespace Tetris
 
         public bool IsInside(int x, int y)
         {
-            return x >= 0 && x < xLength && y >= 0 && y < yLength;
+            return x >= 0 && x < gridWidth && y >= 0 && y < gridHeight;
         }
 
         public bool IsEmpty(int x, int y)
@@ -114,7 +138,7 @@ namespace Tetris
 
         public bool IsRowEmpty(int x)
         {
-            for (int y = 0; y < yLength; y++)
+            for (int y = 0; y < gridHeight; y++)
             {
                 if (!(gridBtn[x, y].BackColor.Equals(Color.PowderBlue)))
                 {
@@ -127,7 +151,7 @@ namespace Tetris
 
         public bool IsRowFull(int x)
         {
-            for (int y = 0; y < yLength; y++)
+            for (int y = 0; y < gridHeight; y++)
             {
                 if (gridBtn[x, y].BackColor.Equals(Color.PowderBlue))
                 {
