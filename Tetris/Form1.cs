@@ -22,8 +22,8 @@ namespace Tetris
         Button[,] gridBtn = new Button[gridColumns,gridRows];
         Label scoreLbl = new Label();
         public int score = 0;
-        int[] BlockCoordX;//Using these to store current Coordinates of the block
-        int[] BlockCoordY;
+        public int[] BlockCoordX = new int[4];//Using these to store current Coordinates of the block
+        public int[] BlockCoordY = new int[4];
         int currentColour;
         int spawn { get; set; }
         int nextSpawn { get; set; }
@@ -77,6 +77,7 @@ namespace Tetris
             BlockSpawn();
 
             Thread.Sleep(1000);
+            MoveBlockDown();
             MoveRowsDown(1, 2);
 
         }
@@ -371,6 +372,7 @@ namespace Tetris
         public void BlockSpawn()
         {
             int blockSpawn = spawn;
+            //int blockSpawn = 1;
             if (blockSpawn == 0)
             {
                 DrawIBlock(BlockStartX, BlockStartY);
