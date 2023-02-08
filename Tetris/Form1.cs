@@ -21,10 +21,12 @@ namespace Tetris
         public static int gridHeight = 20;
         Button[,] gridBtn = new Button[gridColumns,gridRows];
         Label scoreLbl = new Label();
+        Label NextBlockSpawn = new Label();
         public int score = 0;
         public int[] BlockCoordX = new int[4];//Using these to store current Coordinates of the block
         public int[] BlockCoordY = new int[4];
         int currentColour;
+        int rotationState = 1;
         int spawn { get; set; }
         int nextSpawn { get; set; }
 
@@ -68,6 +70,9 @@ namespace Tetris
             scoreLbl.Text = "Score: " + score;
             scoreLbl.SetBounds(500,60,60,60);
             Controls.Add(scoreLbl);
+            NextBlockSpawn.Text = "Next Block: "  + DisplayNextBlock(); ;
+            NextBlockSpawn.SetBounds(500,80,60,60);
+            Controls.Add(NextBlockSpawn);
 
             // GAME START
 
@@ -82,113 +87,285 @@ namespace Tetris
 
         }
 
-        
+        public void DrawBlock()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                gridBtn[BlockCoordX[i], BlockCoordY[i]].BackColor = colorList[currentColour];//Draws Block at with the set coordinates
+            }
+        }
         public void DrawIBlock(int drawX, int drawY)
         {
-            int width = 4;
-            for (int y = 0; y < width; y++)
+            if(rotationState == 0)
             {
-                gridBtn[drawX, drawY + y].BackColor = colorList[0];
-                BlockCoordX[y] =  drawX;
-                BlockCoordY[y] = drawY + y;
+                currentColour = 0;
+                int width = 4;
+                for (int y = 0; y < width; y++)
+                {
+                    BlockCoordX[y] = drawX;
+                    BlockCoordY[y] = drawY + y;
+                }
+                rotationState = +1; //so when rotate is pressed it skips 1 on the first iteration
             }
-            currentColour = 0;
-
+            if(rotationState == 1)
+            {
+                BlockCoordX[0] = -1;
+                BlockCoordY[1] = -1;
+                BlockCoordX[2] = +1;
+                BlockCoordY[2] = -2;
+                BlockCoordX[3] = +2;
+                BlockCoordY[3] = -3;
+            }
+            else if (rotationState == 2)
+            {
+                BlockCoordX[0] = +1;
+                BlockCoordY[1] = +1;
+                BlockCoordX[2] = -1;
+                BlockCoordY[2] = +2;
+                BlockCoordX[3] = -2;
+                BlockCoordY[3] = +3;
+                rotationState = 0; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
+            }
         }
+        
+        
         public void DrawLBlock(int drawX, int drawY)
         {
-            gridBtn[drawX,drawY].BackColor = colorList[1];
-            gridBtn[drawX,drawY + 1].BackColor = colorList[1];
-            gridBtn[drawX,drawY + 2].BackColor = colorList[1];
-            gridBtn[drawX + 1, drawY + 2].BackColor = colorList[1];
-            BlockCoordX[0] = drawX;
-            BlockCoordY[0] = drawY;
-            BlockCoordX[1] = drawX;
-            BlockCoordY[1] = drawY + 1;
-            BlockCoordX[2] = drawX;
-            BlockCoordY[2] = drawY + 2;
-            BlockCoordX[3] = drawX + 1;
-            BlockCoordY[3] = drawY + 2;
-            currentColour = 1;
+            
+            if (rotationState == 0)
+            {
+                currentColour = 1;
+                BlockCoordX[0] = drawX;
+                BlockCoordY[0] = drawY;
+                BlockCoordX[1] = drawX;
+                BlockCoordY[1] = drawY + 1;
+                BlockCoordX[2] = drawX;
+                BlockCoordY[2] = drawY + 2;
+                BlockCoordX[3] = drawX + 1;
+                BlockCoordY[3] = drawY + 2;
+                rotationState = +1;
+            } 
+            if(rotationState == 1)
+            {
+                BlockCoordX[0] = -1;
+                BlockCoordY[1] = -1;
+                BlockCoordX[2] = +1;
+                BlockCoordY[2] = -2;
+                BlockCoordX[3] = +2;
+                BlockCoordY[3] = -1;
+            }
+            else if (rotationState == 2)
+            {
+                BlockCoordY[0] = +2;
+                BlockCoordX[1] = -1;
+                BlockCoordY[1] = +1;
+                BlockCoordX[2] = -2;
+                BlockCoordX[3] = -1;
+                BlockCoordY[3] = -1;
+            }
+            else if (rotationState == 3)
+            {
+                BlockCoordX[0] = +2;
+                BlockCoordY[0] = -1;
+                BlockCoordX[1] = +1;
+                BlockCoordY[2] = +1;
+                BlockCoordX[3] = -1;
+            }
+            else if (rotationState == 4)
+            {
+                BlockCoordX[0] = -1;
+                BlockCoordY[0] = -1;
+                BlockCoordX[2] = +1;
+                BlockCoordY[2] = +1;
+                BlockCoordY[3] = +2;
+                rotationState = 0; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
+            }
         }
+       
         public void DrawJBlock(int drawX, int drawY)
         {
-            gridBtn[drawX, drawY].BackColor = colorList[2];
-            gridBtn[drawX, drawY + 1].BackColor = colorList[2];
-            gridBtn[drawX, drawY + 2].BackColor = colorList[2];
-            gridBtn[drawX - 1, drawY + 2].BackColor = colorList[2];
-            BlockCoordX[0] = drawX;
-            BlockCoordY[0] = drawY;
-            BlockCoordX[1] = drawX;
-            BlockCoordY[1] = drawY + 1;
-            BlockCoordX[2] = drawX;
-            BlockCoordY[2] = drawY + 2;
-            BlockCoordX[3] = drawX - 1;
-            BlockCoordY[3] = drawY + 2;
-            currentColour = 2;
+            if(rotationState == 0)
+            {
+                currentColour = 2;
+                BlockCoordX[0] = drawX;
+                BlockCoordY[0] = drawY;
+                BlockCoordX[1] = drawX;
+                BlockCoordY[1] = drawY + 1;
+                BlockCoordX[2] = drawX;
+                BlockCoordY[2] = drawY + 2;
+                BlockCoordX[3] = drawX - 1;
+                BlockCoordY[3] = drawY + 2;
+                rotationState =+ 1;
+            } 
+            else if (rotationState == 1)
+            {
+                BlockCoordY[0] = +1;
+                BlockCoordX[1] = +1;
+                BlockCoordX[2] = +2;
+                BlockCoordY[2] = -1;
+                BlockCoordX[3] = +1;
+                BlockCoordY[3] = -2;
+            }
+            else if(rotationState == 2)
+            {
+                BlockCoordX[0] = +1;
+                BlockCoordY[0] = +1;
+                BlockCoordX[2] = -1;
+                BlockCoordY[2] = -1;
+                BlockCoordX[3] = -2;
+            }
+            if(rotationState == 3)
+            {
+                BlockCoordX[0] = +1;
+                BlockCoordY[0] = -2;
+                BlockCoordY[1] = -1;
+                BlockCoordX[2] = -1;
+                BlockCoordY[3] = +1;
+            }
+            if(rotationState == 4)
+            {
+                BlockCoordX[0] = -2;
+                BlockCoordX[1] = -1;
+                BlockCoordY[1] = +1;
+                BlockCoordY[2] = +2;
+                BlockCoordX[3] = +1;
+                BlockCoordY[3] = +1;
+                rotationState= 0; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
+            }
         }
         public void DrawSBlock(int drawX, int drawY)
         {
-            gridBtn[drawX, drawY].BackColor = colorList[3];
-            gridBtn[drawX, drawY + 1].BackColor = colorList[3];
-            gridBtn[drawX + 1, drawY + 1 ].BackColor = colorList[3];
-            gridBtn[drawX + 1, drawY + 2].BackColor = colorList[3];
-            BlockCoordX[0] = drawX;
-            BlockCoordY[0] = drawY;
-            BlockCoordX[1] = drawX;
-            BlockCoordY[1] = drawY + 1;
-            BlockCoordX[2] = drawX + 1;
-            BlockCoordY[2] = drawY + 1;
-            BlockCoordX[3] = drawX + 1;
-            BlockCoordY[3] = drawY + 2;
-            currentColour = 3;
+
+            if (rotationState == 0)
+            {
+                currentColour = 3;
+                BlockCoordX[0] = drawX;
+                BlockCoordY[0] = drawY;
+                BlockCoordX[1] = drawX;
+                BlockCoordY[1] = drawY + 1;
+                BlockCoordX[2] = drawX + 1;
+                BlockCoordY[2] = drawY + 1;
+                BlockCoordX[3] = drawX + 1;
+                BlockCoordY[3] = drawY + 2;
+                rotationState = +1;
+            }
+            else if(rotationState == 1)
+            {
+                BlockCoordY[0] = -2;
+                BlockCoordX[1] = +1;
+                BlockCoordY[1] = -1;
+                BlockCoordX[3] = +1;
+                BlockCoordY[3] = +1;
+            }
+            else if (rotationState == 2)
+            {
+                BlockCoordY[0] = +2;
+                BlockCoordX[1] = -1;
+                BlockCoordY[1] = +1;
+                BlockCoordX[3] = -1;
+                BlockCoordY[3] = -1;
+                rotationState = 0; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
+            }
         }
         public void DrawZBlock(int drawX, int drawY)
         {
-            gridBtn[drawX, drawY].BackColor = colorList[4];
-            gridBtn[drawX + 1, drawY].BackColor = colorList[4];
-            gridBtn[drawX + 1, drawY + 1].BackColor = colorList[4];
-            gridBtn[drawX + 2, drawY + 1].BackColor = colorList[4];
-            BlockCoordX[0] = drawX;
-            BlockCoordY[0] = drawY;
-            BlockCoordX[1] = drawX + 1;
-            BlockCoordY[1] = drawY;
-            BlockCoordX[2] = drawX + 1;
-            BlockCoordY[2] = drawY + 1;
-            BlockCoordX[3] = drawX + 2;
-            BlockCoordY[3] = drawY + 1;
-            currentColour = 4;
+            
+            if (rotationState == 0)
+            {
+                currentColour = 4;
+                BlockCoordX[0] = drawX;
+                BlockCoordY[0] = drawY;
+                BlockCoordX[1] = drawX + 1;
+                BlockCoordY[1] = drawY;
+                BlockCoordX[2] = drawX + 1;
+                BlockCoordY[2] = drawY + 1;
+                BlockCoordX[3] = drawX + 2;
+                BlockCoordY[3] = drawY + 1;
+                rotationState = +1;
+            }
+            else if (rotationState == 1)
+            {
+                BlockCoordY[0] = -1;
+                BlockCoordX[1] = -1;
+                BlockCoordY[2] = +1;
+                BlockCoordX[3] = -1;
+                BlockCoordY[3] = +2;
+            }
+            else if (rotationState ==2)
+            {
+                BlockCoordY[0] = +1;
+                BlockCoordX[1] = +1;
+                BlockCoordY[2] = -1;
+                BlockCoordX[3] = +1;
+                BlockCoordY[3] = -2;
+                rotationState = 0; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
+            }
         }
         public void DrawOBlock(int drawX, int drawY)
         {
+            currentColour = 5;
             int width = 2;
             int height = 2;
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
-                {
-                    gridBtn[drawX + x, drawY + y].BackColor = colorList[5];
+                { 
                     BlockCoordX[x] = drawX + x;
                     BlockCoordY[y] = drawY + y;
                 }
             }
-            currentColour = 5;
+            
+            
         }
         public void DrawTBlock(int drawX, int drawY)
         {
-            gridBtn[drawX, drawY + 1].BackColor = colorList[6];
-            gridBtn[drawX + 1, drawY + 1].BackColor = colorList[6];
-            gridBtn[drawX + 1, drawY].BackColor = colorList[6];
-            gridBtn[drawX + 2, drawY + 1].BackColor = colorList[6];
-            BlockCoordX[0] = drawX;
-            BlockCoordY[0] = drawY + 1;
-            BlockCoordX[1] = drawX + 1;
-            BlockCoordY[1] = drawY + 1;
-            BlockCoordX[2] = drawX + 1;
-            BlockCoordY[2] = drawY;
-            BlockCoordX[3] = drawX + 2;
-            BlockCoordY[3] = drawY + 1;
-            currentColour = 6;
+            
+            if (rotationState == 0)
+            {
+                currentColour = 6;
+                BlockCoordX[0] = drawX;
+                BlockCoordY[0] = drawY + 1;
+                BlockCoordX[1] = drawX + 1;
+                BlockCoordY[1] = drawY + 1;
+                BlockCoordX[2] = drawX + 1;
+                BlockCoordY[2] = drawY;
+                BlockCoordX[3] = drawX + 2;
+                BlockCoordY[3] = drawY + 1;
+                rotationState = +1;
+            }
+            else if(rotationState == 1)
+            {
+                BlockCoordX[0] = -2;
+                BlockCoordX[1] = -1;
+                BlockCoordY[1] = +1;
+                BlockCoordY[2] = +2;
+            }
+            else if (rotationState == 2)
+            {
+                BlockCoordY[0] = +1;
+                BlockCoordX[1] = +1;
+                BlockCoordX[2] = +2;
+                BlockCoordY[2] = -1;
+                BlockCoordY[3] = -1;
+            }
+            else if (rotationState == 3)
+            {
+                BlockCoordX[0] = +1;
+                BlockCoordY[0] = +1;
+                BlockCoordX[2] = -1;
+                BlockCoordY[2] = -1;
+                BlockCoordX[3] = -1;
+                BlockCoordY[3] = +1;
+            }
+            else if (rotationState == 4)
+            {
+                BlockCoordX[0] = +1;
+                BlockCoordY[0] = -2;
+                BlockCoordY[1] = -1;
+                BlockCoordX[2] = -1;
+                BlockCoordX[3] = +1;
+                rotationState = 0; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
+            }
         }
 
 
@@ -314,10 +491,7 @@ namespace Tetris
                     BlockCoordX[i] = -1;//Decreasing each X value by one translates the block one to the left
                 }
                 DeleteCurrentBlock();//Deletes the block at the old coordinate
-                for (int i = 0; i < 4; i++)
-                {
-                    gridBtn[BlockCoordX[i], BlockCoordY[i]].BackColor = colorList[currentColour];//spawns the block back in again at the new coordinate
-                }
+                DrawBlock();
             }
         }
         public void MoveBlockRight() 
@@ -329,10 +503,7 @@ namespace Tetris
                     BlockCoordX[i] = +1;//Increasing each X value by one translates the block one to the right
                 }
                 DeleteCurrentBlock();//Deletes the block at the old coordinate
-                for (int i = 0; i < 4; i++)
-                {
-                    gridBtn[BlockCoordX[i], BlockCoordY[i]].BackColor = colorList[currentColour];//spawns the block back in again at the new coordinate
-                }
+                DrawBlock();
             }
         }
         public void MoveBlockDown()
@@ -343,10 +514,7 @@ namespace Tetris
                 BlockCoordY[i] = +1;//Increasing the Y coordinate means we can move the block down the grid
             }
             DeleteCurrentBlock();
-            for (int i = 0; i < 4; i++)
-            {
-                gridBtn[BlockCoordX[i], BlockCoordY[i]].BackColor = colorList[currentColour];
-            }
+            DrawBlock();
 
         }
         public void DeleteCurrentBlock()//Uses the block coordinates saved in an array to revert the block back to the base colour
@@ -357,7 +525,7 @@ namespace Tetris
             }    
         }
 
-        public void StoreBlock(object sender, EventArgs e)// enables us to store a block and switch to the next block 
+        public void StoreBlock()// enables us to store a block and switch to the next block 
         {
             int holder = spawn;
             spawn = nextSpawn;
@@ -369,6 +537,75 @@ namespace Tetris
         {
             return score;
         }
+        public void RotateBlock()//Use this function in a rotate button
+        {
+            rotationState = +1;
+            if (currentColour == 0)
+            {
+                DrawIBlock(BlockStartX, BlockStartY);
+                DrawBlock();
+            }
+            else if(currentColour == 1)
+            {
+                DrawLBlock(BlockStartX, BlockStartY);
+                DrawBlock();
+            }
+            else if(currentColour == 2)
+            {
+                DrawJBlock(BlockStartX, BlockStartY);
+                DrawBlock();
+            }
+            else if(currentColour == 3)
+            {
+                DrawSBlock(BlockStartX, BlockStartY);
+                DrawBlock();
+            }
+            else if(currentColour == 4)
+            {
+                DrawZBlock(BlockStartX, BlockStartY);
+                DrawBlock();
+            }
+            //No rotation for O block as it stays the same
+            else if(currentColour == 6)
+            {
+                DrawTBlock(BlockStartX, BlockStartY);
+                DrawBlock();
+            }
+
+        }
+        public char DisplayNextBlock()
+        {
+            if (nextSpawn == 0)
+            {
+                return 'I';
+            }
+            if (nextSpawn == 1)
+            {
+                return 'L';
+            }
+            if (nextSpawn == 2)
+            {
+                return 'J';
+            }
+            if (nextSpawn == 3)
+            {
+                return 'S';
+            }
+            if (nextSpawn == 4)
+            {
+                return 'Z';
+            }
+            if (nextSpawn == 5)
+            {
+                return 'O';
+            }
+            if (nextSpawn == 6)
+            {
+                return 'T';
+            }
+            else return 'E';
+           
+        }
         public void BlockSpawn()
         {
             int blockSpawn = spawn;
@@ -376,30 +613,37 @@ namespace Tetris
             if (blockSpawn == 0)
             {
                 DrawIBlock(BlockStartX, BlockStartY);
+                DrawBlock();
             }
             if (blockSpawn == 1)
             {
                 DrawLBlock(BlockStartX, BlockStartY);
+                DrawBlock();
             }
             if (blockSpawn == 2)
             {
                 DrawJBlock(BlockStartX, BlockStartY);   
+                DrawBlock();
             }
             if (blockSpawn == 3)
             {
                 DrawSBlock(BlockStartX, BlockStartY);
+                DrawBlock();
             }
             if (blockSpawn == 4)
             {
                 DrawZBlock(BlockStartX, BlockStartY);
+                DrawBlock();
             }
             if (blockSpawn == 5)
             {
                 DrawOBlock(BlockStartX, BlockStartY);
+                DrawBlock();
             }
             if (blockSpawn == 6)
             {
                 DrawTBlock(BlockStartX, BlockStartY);
+                DrawBlock();
             }
         }
         void btnEvent_Click(object sender, EventArgs e)
