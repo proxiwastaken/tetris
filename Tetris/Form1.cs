@@ -19,14 +19,15 @@ namespace Tetris
         public static int gridWidth = 10;
         public static int gridRows = 20;
         public static int gridHeight = 20;
-        Button[,] gridBtn = new Button[gridColumns,gridRows];
+        Button[,] gridBtn = new Button[gridColumns, gridRows];
+        Button rotateBtn = new Button();
         Label scoreLbl = new Label();
         Label NextBlockSpawn = new Label();
         public int score = 0;
-        public int[] BlockCoordX = new int[4];//Using these to store current Coordinates of the block
-        public int[] BlockCoordY = new int[4];
+        public static int[] BlockCoordX;//Using these to store current Coordinates of the block
+        public static int[] BlockCoordY;
         int currentColour;
-        int rotationState = 1;
+        int rotationState = 0;
         int spawn { get; set; }
         int nextSpawn { get; set; }
 
@@ -50,28 +51,34 @@ namespace Tetris
             // Variables
 
             // Initialise Grid
-            for (int x = 0; x < gridBtn.GetLength(0); x++) 
+            for (int x = 0; x < gridBtn.GetLength(0); x++)
             {
-                for (int y = 0; y< gridBtn.GetLength(1); y++)
+                for (int y = 0; y < gridBtn.GetLength(1); y++)
                 {
-                    gridBtn[x,y] = new Button();
-                    gridBtn[x,y].FlatStyle = FlatStyle.Flat;
+                    gridBtn[x, y] = new Button();
+                    gridBtn[x, y].FlatStyle = FlatStyle.Flat;
                     gridBtn[x, y].FlatAppearance.BorderColor = Color.White;
-                    gridBtn[x,y].SetBounds(40+(30 * x), 60+(30 * y), 30, 30);
-                    gridBtn[x,y].BackColor = Color.PowderBlue; // Every "Powder Blue" cell is empty.
+                    gridBtn[x, y].SetBounds(40 + (30 * x), 60 + (30 * y), 30, 30);
+                    gridBtn[x, y].BackColor = Color.PowderBlue; // Every "Powder Blue" cell is empty.
                     // gridBtn[x,y].Text = Convert.ToString(x + 1) + "," + (y+1);
 
-                    gridBtn[x,y].Click += new EventHandler(this.btnEvent_Click);
-                    Controls.Add(gridBtn[x,y]);
+                    gridBtn[x, y].Click += new EventHandler(this.btnEvent_Click);
+                    Controls.Add(gridBtn[x, y]);
                 }
             }
 
+            // Initialise Controls
+            rotateBtn.SetBounds(500, 90, 110, 70);
+            rotateBtn.Text = "Rotate";
+            rotateBtn.Click += new EventHandler(this.btnRotate_Click);
+            Controls.Add(rotateBtn);
+
             // Initialise Labels
             scoreLbl.Text = "Score: " + score;
-            scoreLbl.SetBounds(500,60,60,60);
+            scoreLbl.SetBounds(500, 60, 60, 60);
             Controls.Add(scoreLbl);
-            NextBlockSpawn.Text = "Next Block: "  + DisplayNextBlock(); ;
-            NextBlockSpawn.SetBounds(500,80,60,60);
+            NextBlockSpawn.Text = "Next Block: " + DisplayNextBlock(); ;
+            NextBlockSpawn.SetBounds(500, 80, 60, 60);
             Controls.Add(NextBlockSpawn);
 
             // GAME START
@@ -82,8 +89,6 @@ namespace Tetris
             BlockSpawn();
 
             Thread.Sleep(1000);
-            MoveBlockDown();
-            MoveRowsDown(1, 2);
 
         }
 
@@ -96,42 +101,42 @@ namespace Tetris
         }
         public void DrawIBlock(int drawX, int drawY)
         {
-            if(rotationState == 0)
+            int width = 4;
+            currentColour = 0;
+            if (rotationState == 0)
             {
-                currentColour = 0;
-                int width = 4;
                 for (int y = 0; y < width; y++)
                 {
                     BlockCoordX[y] = drawX;
                     BlockCoordY[y] = drawY + y;
                 }
                 rotationState = +1; //so when rotate is pressed it skips 1 on the first iteration
+                return;
             }
-            if(rotationState == 1)
+            else if (rotationState == 1)
             {
-                BlockCoordX[0] = -1;
-                BlockCoordY[1] = -1;
-                BlockCoordX[2] = +1;
-                BlockCoordY[2] = -2;
-                BlockCoordX[3] = +2;
-                BlockCoordY[3] = -3;
+                for (int y = 0; y < width; y++)
+                {
+                    BlockCoordX[y] = (drawX - 1) + y;
+                    BlockCoordY[y] = drawY;
+                }
+                rotationState = 0;
             }
             else if (rotationState == 2)
             {
-                BlockCoordX[0] = +1;
-                BlockCoordY[1] = +1;
-                BlockCoordX[2] = -1;
-                BlockCoordY[2] = +2;
-                BlockCoordX[3] = -2;
-                BlockCoordY[3] = +3;
-                rotationState = 0; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
+                //for (int y = 0; y < width; y++)
+                //{
+                //    BlockCoordX[y] = drawX;
+                //    BlockCoordY[y] = drawY + y;
+                //}
+                //rotationState = 0; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
             }
         }
-        
-        
+
+
         public void DrawLBlock(int drawX, int drawY)
         {
-            
+
             if (rotationState == 0)
             {
                 currentColour = 1;
@@ -144,8 +149,8 @@ namespace Tetris
                 BlockCoordX[3] = drawX + 1;
                 BlockCoordY[3] = drawY + 2;
                 rotationState = +1;
-            } 
-            if(rotationState == 1)
+            }
+            if (rotationState == 1)
             {
                 BlockCoordX[0] = -1;
                 BlockCoordY[1] = -1;
@@ -181,10 +186,10 @@ namespace Tetris
                 rotationState = 0; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
             }
         }
-       
+
         public void DrawJBlock(int drawX, int drawY)
         {
-            if(rotationState == 0)
+            if (rotationState == 0)
             {
                 currentColour = 2;
                 BlockCoordX[0] = drawX;
@@ -195,8 +200,8 @@ namespace Tetris
                 BlockCoordY[2] = drawY + 2;
                 BlockCoordX[3] = drawX - 1;
                 BlockCoordY[3] = drawY + 2;
-                rotationState =+ 1;
-            } 
+                rotationState = +1;
+            }
             else if (rotationState == 1)
             {
                 BlockCoordY[0] = +1;
@@ -206,7 +211,7 @@ namespace Tetris
                 BlockCoordX[3] = +1;
                 BlockCoordY[3] = -2;
             }
-            else if(rotationState == 2)
+            else if (rotationState == 2)
             {
                 BlockCoordX[0] = +1;
                 BlockCoordY[0] = +1;
@@ -214,7 +219,7 @@ namespace Tetris
                 BlockCoordY[2] = -1;
                 BlockCoordX[3] = -2;
             }
-            if(rotationState == 3)
+            if (rotationState == 3)
             {
                 BlockCoordX[0] = +1;
                 BlockCoordY[0] = -2;
@@ -222,7 +227,7 @@ namespace Tetris
                 BlockCoordX[2] = -1;
                 BlockCoordY[3] = +1;
             }
-            if(rotationState == 4)
+            if (rotationState == 4)
             {
                 BlockCoordX[0] = -2;
                 BlockCoordX[1] = -1;
@@ -230,7 +235,7 @@ namespace Tetris
                 BlockCoordY[2] = +2;
                 BlockCoordX[3] = +1;
                 BlockCoordY[3] = +1;
-                rotationState= 0; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
+                rotationState = 0; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
             }
         }
         public void DrawSBlock(int drawX, int drawY)
@@ -249,7 +254,7 @@ namespace Tetris
                 BlockCoordY[3] = drawY + 2;
                 rotationState = +1;
             }
-            else if(rotationState == 1)
+            else if (rotationState == 1)
             {
                 BlockCoordY[0] = -2;
                 BlockCoordX[1] = +1;
@@ -269,7 +274,7 @@ namespace Tetris
         }
         public void DrawZBlock(int drawX, int drawY)
         {
-            
+
             if (rotationState == 0)
             {
                 currentColour = 4;
@@ -291,7 +296,7 @@ namespace Tetris
                 BlockCoordX[3] = -1;
                 BlockCoordY[3] = +2;
             }
-            else if (rotationState ==2)
+            else if (rotationState == 2)
             {
                 BlockCoordY[0] = +1;
                 BlockCoordX[1] = +1;
@@ -309,17 +314,17 @@ namespace Tetris
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
-                { 
+                {
                     BlockCoordX[x] = drawX + x;
                     BlockCoordY[y] = drawY + y;
                 }
             }
-            
-            
+
+
         }
         public void DrawTBlock(int drawX, int drawY)
         {
-            
+
             if (rotationState == 0)
             {
                 currentColour = 6;
@@ -333,7 +338,7 @@ namespace Tetris
                 BlockCoordY[3] = drawY + 1;
                 rotationState = +1;
             }
-            else if(rotationState == 1)
+            else if (rotationState == 1)
             {
                 BlockCoordX[0] = -2;
                 BlockCoordX[1] = -1;
@@ -373,7 +378,7 @@ namespace Tetris
         {
             for (int x = 0; x < gridColumns; x++)
             {
-                gridBtn[x,row].BackColor = Color.PowderBlue;
+                gridBtn[x, row].BackColor = Color.PowderBlue;
             }
         }
 
@@ -398,8 +403,9 @@ namespace Tetris
                 {
                     ClearRow(x);
                     cleared++;
-                    score =+ 100;
-                } else if (cleared > 0)
+                    score = +100;
+                }
+                else if (cleared > 0)
                 {
                     MoveRowsDown(x, cleared);
                 }
@@ -468,24 +474,24 @@ namespace Tetris
                 }
                 firstSpawn = false;
             } while (firstSpawn == true);//once the original values are assigned it goes to normal
-            
-            if(firstSpawn == false)
+
+            if (firstSpawn == false)
             {
                 spawn = nextSpawn;//the second time the method is called, the original spawn value is overwritten by next spawn
-                nextSpawn = rdm.Next(0,6);//the nextSpawn value is assigned a random number
+                nextSpawn = rdm.Next(0, 6);//the nextSpawn value is assigned a random number
                 while (nextSpawn == spawn)//so nextSpawn and spawn aren't the same
                 {
                     nextSpawn = rdm.Next(0, 6);
                 }
             }
-            
+
         }
         public void MoveBlockLeft()
         {
-            
-            if (IsInside(BlockCoordX[0] -1, BlockCoordY[0]) == true || IsInside(BlockCoordX[1] - 1, BlockCoordY[0]) == true || IsInside(BlockCoordX[2] - 1, BlockCoordY[0]) == true || IsInside(BlockCoordX[3] - 1, BlockCoordY[0])  == true)
-          
-            { 
+
+            if (IsInside(BlockCoordX[0] - 1, BlockCoordY[0]) == true || IsInside(BlockCoordX[1] - 1, BlockCoordY[0]) == true || IsInside(BlockCoordX[2] - 1, BlockCoordY[0]) == true || IsInside(BlockCoordX[3] - 1, BlockCoordY[0]) == true)
+
+            {
                 for (int i = 0; i < 4; i++)
                 {
                     BlockCoordX[i] = -1;//Decreasing each X value by one translates the block one to the left
@@ -494,7 +500,7 @@ namespace Tetris
                 DrawBlock();
             }
         }
-        public void MoveBlockRight() 
+        public void MoveBlockRight()
         {
             if (IsInside(BlockCoordX[0] + 1, BlockCoordY[0]) == false || IsInside(BlockCoordX[1] + 1, BlockCoordY[0]) == false || IsInside(BlockCoordX[2] + 1, BlockCoordY[0]) == false || IsInside(BlockCoordX[3] + 1, BlockCoordY[0]) == false)
             {
@@ -508,11 +514,11 @@ namespace Tetris
         }
         public void MoveBlockDown()
         {
-            if(BlockThere(BlockCoordX[0], BlockCoordY[0] + 1) == false || BlockThere(BlockCoordX[0], BlockCoordY[0] + 1) == false || BlockThere(BlockCoordX[0], BlockCoordY[0] + 1) == false || BlockThere(BlockCoordX[0], BlockCoordY[0] + 1) == false)
-            for (int i = 0; i < 4; i++)
-            {
-                BlockCoordY[i] = +1;//Increasing the Y coordinate means we can move the block down the grid
-            }
+            if (BlockThere(BlockCoordX[0], BlockCoordY[0] + 1) == false || BlockThere(BlockCoordX[0], BlockCoordY[0] + 1) == false || BlockThere(BlockCoordX[0], BlockCoordY[0] + 1) == false || BlockThere(BlockCoordX[0], BlockCoordY[0] + 1) == false)
+                for (int i = 0; i < 4; i++)
+                {
+                    BlockCoordY[i] = +1;//Increasing the Y coordinate means we can move the block down the grid
+                }
             DeleteCurrentBlock();
             DrawBlock();
 
@@ -521,8 +527,8 @@ namespace Tetris
         {
             for (int i = 0; i < 4; i++)
             {
-                    gridBtn[BlockCoordX[i],BlockCoordY[i]].BackColor = Color.PowderBlue;
-            }    
+                gridBtn[BlockCoordX[i], BlockCoordY[i]].BackColor = Color.PowderBlue;
+            }
         }
 
         public void StoreBlock()// enables us to store a block and switch to the next block 
@@ -531,7 +537,7 @@ namespace Tetris
             spawn = nextSpawn;
             nextSpawn = holder;
             DeleteCurrentBlock();
-            
+
         }
         public int DisplayScore()
         {
@@ -539,34 +545,34 @@ namespace Tetris
         }
         public void RotateBlock()//Use this function in a rotate button
         {
-            rotationState = +1;
             if (currentColour == 0)
             {
-                DrawIBlock(BlockStartX, BlockStartY);
+                DeleteCurrentBlock();
+                DrawIBlock(BlockCoordX[0], BlockCoordY[1]);
                 DrawBlock();
             }
-            else if(currentColour == 1)
+            else if (currentColour == 1)
             {
                 DrawLBlock(BlockStartX, BlockStartY);
                 DrawBlock();
             }
-            else if(currentColour == 2)
+            else if (currentColour == 2)
             {
                 DrawJBlock(BlockStartX, BlockStartY);
                 DrawBlock();
             }
-            else if(currentColour == 3)
+            else if (currentColour == 3)
             {
                 DrawSBlock(BlockStartX, BlockStartY);
                 DrawBlock();
             }
-            else if(currentColour == 4)
+            else if (currentColour == 4)
             {
                 DrawZBlock(BlockStartX, BlockStartY);
                 DrawBlock();
             }
             //No rotation for O block as it stays the same
-            else if(currentColour == 6)
+            else if (currentColour == 6)
             {
                 DrawTBlock(BlockStartX, BlockStartY);
                 DrawBlock();
@@ -604,10 +610,12 @@ namespace Tetris
                 return 'T';
             }
             else return 'E';
-           
+
         }
         public void BlockSpawn()
         {
+            BlockCoordX = new int[4];
+            BlockCoordY = new int[4];
             int blockSpawn = spawn;
             //int blockSpawn = 1;
             if (blockSpawn == 0)
@@ -622,7 +630,7 @@ namespace Tetris
             }
             if (blockSpawn == 2)
             {
-                DrawJBlock(BlockStartX, BlockStartY);   
+                DrawJBlock(BlockStartX, BlockStartY);
                 DrawBlock();
             }
             if (blockSpawn == 3)
@@ -649,6 +657,11 @@ namespace Tetris
         void btnEvent_Click(object sender, EventArgs e)
         {
             Console.WriteLine(((Button)sender).Text);
+        }
+
+        void btnRotate_Click(object sender, EventArgs e)
+        {
+            RotateBlock();
         }
 
         private void Form1_Load(object sender, EventArgs e)
