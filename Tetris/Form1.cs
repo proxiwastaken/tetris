@@ -553,9 +553,9 @@ namespace Tetris
                 }
                 else
                 {
-                    DeleteCurrentBlock();
                     for (int i = 0; i < 4; i++)
                     {
+                        DeleteCurrentBlock();
                         BlockCoordY[i] += 1;//Increasing the Y coordinate means we can move the block down the grid
                         DrawBlock();
                     }
@@ -577,6 +577,7 @@ namespace Tetris
             for (int i = 0; i < 4; i++)
             {
                 gridBtn[BlockCoordX[i], BlockCoordY[i]].BackColor = Color.PowderBlue;
+                Console.WriteLine(gridBtn[BlockCoordX[i], BlockCoordY[i]].BackColor);
             }
         }
 
