@@ -21,6 +21,7 @@ namespace Tetris
         public static int gridHeight = 20;
         Button[,] gridBtn = new Button[gridColumns, gridRows];
         Button rotateBtn = new Button();
+        Button moveBtn = new Button();
         Label scoreLbl = new Label();
         Label NextBlockSpawn = new Label();
         public int score = 0;
@@ -72,6 +73,11 @@ namespace Tetris
             rotateBtn.Text = "Rotate";
             rotateBtn.Click += new EventHandler(this.btnRotate_Click);
             Controls.Add(rotateBtn);
+
+            moveBtn.SetBounds(500, 190, 110, 70);
+            moveBtn.Text = "Move block down.";
+            moveBtn.Click += new EventHandler(this.btnMove_Click);
+            Controls.Add(moveBtn);
 
             // Initialise Labels
             scoreLbl.Text = "Score: " + score;
@@ -418,10 +424,18 @@ namespace Tetris
         {
             return x >= 0 && x < gridWidth && y >= 0 && y < gridHeight;
         }
+
         public bool BlockThere(int x, int y)//If there is a block where the coordinates are inputed it returns true  (Currently an issue with this is that the method might return true as sometimes the current block can set it off))
         {
             if (!gridBtn[x, y].BackColor.Equals(Color.PowderBlue))
             {
+                for (int z = 0; z < 4; z++)
+                {
+                    if (x == BlockCoordX[z] && y == BlockCoordY[z])
+                    {
+                        return false;
+                    }
+                }
                 return true;
             }
             else
@@ -514,12 +528,12 @@ namespace Tetris
         }
         public void MoveBlockDown()
         {
-            if (BlockThere(BlockCoordX[0], BlockCoordY[0] + 1) == false || BlockThere(BlockCoordX[0], BlockCoordY[0] + 1) == false || BlockThere(BlockCoordX[0], BlockCoordY[0] + 1) == false || BlockThere(BlockCoordX[0], BlockCoordY[0] + 1) == false)
+            DeleteCurrentBlock();
+            if (BlockThere(BlockCoordX[0], BlockCoordY[0] + 1) == false || BlockThere(BlockCoordX[1], BlockCoordY[1] + 1) == false || BlockThere(BlockCoordX[2], BlockCoordY[2] + 1) == false || BlockThere(BlockCoordX[3], BlockCoordY[3] + 1) == false)
                 for (int i = 0; i < 4; i++)
                 {
-                    BlockCoordY[i] = +1;//Increasing the Y coordinate means we can move the block down the grid
+                    BlockCoordY[i] += 1;//Increasing the Y coordinate means we can move the block down the grid
                 }
-            DeleteCurrentBlock();
             DrawBlock();
 
         }
@@ -662,6 +676,11 @@ namespace Tetris
         void btnRotate_Click(object sender, EventArgs e)
         {
             RotateBlock();
+        }
+
+        void btnMove_Click(object sender, EventArgs e)
+        {
+            MoveBlockDown();
         }
 
         private void Form1_Load(object sender, EventArgs e)
