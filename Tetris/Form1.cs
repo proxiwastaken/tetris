@@ -27,9 +27,12 @@ namespace Tetris
         Button moveBtn = new Button();
         Button leftBtn = new Button();
         Button rightBtn = new Button();
+        Button startBtn = new Button();
+        Button stopBtn = new Button();
         Label scoreLbl = new Label();
         Label NextBlockSpawn = new Label();
-        public int score = 1;
+        bool gameStart = true;
+        public int score = 0;
         public static int[] BlockCoordX;//Using these to store current Coordinates of the block
         public static int[] BlockCoordY;
         int currentColour;
@@ -53,71 +56,75 @@ namespace Tetris
         public Form1()
         {
             InitializeComponent();
-
-            // Variables
-
             // Initialise Grid
-            for (int x = 0; x < gridBtn.GetLength(0); x++)
-            {
-                for (int y = 0; y < gridBtn.GetLength(1); y++)
+                for (int x = 0; x < gridBtn.GetLength(0); x++)
                 {
-                    gridBtn[x, y] = new Button();
-                    gridBtn[x, y].FlatStyle = FlatStyle.Flat;
-                    gridBtn[x, y].FlatAppearance.BorderColor = Color.White;
-                    gridBtn[x, y].SetBounds(40 + (30 * x), 60 + (30 * y), 30, 30);
-                    gridBtn[x, y].BackColor = Color.PowderBlue; // Every "Powder Blue" cell is empty.
-                    // gridBtn[x,y].Text = Convert.ToString(x + 1) + "," + (y+1);
+                    for (int y = 0; y < gridBtn.GetLength(1); y++)
+                    {
+                        gridBtn[x, y] = new Button();
+                        gridBtn[x, y].FlatStyle = FlatStyle.Flat;
+                        gridBtn[x, y].FlatAppearance.BorderColor = Color.White;
+                        gridBtn[x, y].SetBounds(40 + (30 * x), 60 + (30 * y), 30, 30);
+                        gridBtn[x, y].BackColor = Color.PowderBlue; // Every "Powder Blue" cell is empty.
+                                                                    // gridBtn[x,y].Text = Convert.ToString(x + 1) + "," + (y+1);
 
-                    gridBtn[x, y].Click += new EventHandler(this.btnEvent_Click);
-                    Controls.Add(gridBtn[x, y]);
+                        gridBtn[x, y].Click += new EventHandler(this.btnEvent_Click);
+                        Controls.Add(gridBtn[x, y]);
+                    }
                 }
-            }
 
-            // Initialise Controls
-            rotateBtn.SetBounds(500, 90, 110, 70);
-            rotateBtn.Text = "Rotate";
-            rotateBtn.Click += new EventHandler(this.btnRotate_Click);
-            Controls.Add(rotateBtn);
+                // Initialise Controls
+                rotateBtn.SetBounds(500, 90, 110, 70);
+                rotateBtn.Text = "Rotate";
+                rotateBtn.Click += new EventHandler(this.btnRotate_Click);
+                Controls.Add(rotateBtn);
 
-            moveBtn.SetBounds(500, 190, 110, 70);
-            moveBtn.Text = "Move block down.";
-            moveBtn.Click += new EventHandler(this.btnMove_Click);
-            Controls.Add(moveBtn);
+                moveBtn.SetBounds(500, 190, 110, 70);
+                moveBtn.Text = "Move block down.";
+                moveBtn.Click += new EventHandler(this.btnMove_Click);
+                Controls.Add(moveBtn);
 
-            leftBtn.SetBounds(500, 260, 50, 50);
-            leftBtn.Text = "<";
-            leftBtn.Click += new EventHandler(this.btnLeft_Click);
-            Controls.Add(leftBtn);
+                leftBtn.SetBounds(500, 260, 50, 50);
+                leftBtn.Text = "<";
+                leftBtn.Click += new EventHandler(this.btnLeft_Click);
+                Controls.Add(leftBtn);
 
-            rightBtn.SetBounds(560,260,50,50);
-            rightBtn.Text = ">";
-            rightBtn.Click += new EventHandler(this.btnRight_Click);
-            Controls.Add(rightBtn);
+                rightBtn.SetBounds(560, 260, 50, 50);
+                rightBtn.Text = ">";
+                rightBtn.Click += new EventHandler(this.btnRight_Click);
+                Controls.Add(rightBtn);
 
-            // Initialise Labels
-            scoreLbl.Text = "Score: " + score;
-            scoreLbl.SetBounds(500, 60, 60, 60);
-            Controls.Add(scoreLbl);
-            NextBlockSpawn.Text = "Next Block: " + DisplayNextBlock(); ;
-            NextBlockSpawn.SetBounds(500, 80, 60, 60);
-            Controls.Add(NextBlockSpawn);
+                // Initialise Labels
+                scoreLbl.Text = "Score: " + score;
+                scoreLbl.SetBounds(500, 60, 60, 60);
+                Controls.Add(scoreLbl);
+                NextBlockSpawn.Text = "Next Block: " + DisplayNextBlock(); ;
+                NextBlockSpawn.SetBounds(500, 80, 60, 60);
+                Controls.Add(NextBlockSpawn);
 
-            // GAME START
+                // GAME START
 
-            // Creates a new block at the top of the grid.
-            bool gameLoop = true;
-            BlockSpawn();
-            timer.Interval = 2000;
-            timer.Tick += new EventHandler(t_Tick);
-            Thread.Sleep(1500);
-            timer.Start();
+                // Creates a new block at the top of the grid.
+                bool gameLoop = true;
+                BlockSpawn();
+                timer.Interval = 2000;
+                timer.Tick += new EventHandler(t_Tick);
+                Thread.Sleep(1500);
+                timer.Start();
+            
 
+        }
+
+        public void Menu()
+        {
+            //Not developed
         }
 
         public void t_Tick(object sender, EventArgs e)
         {
             timer.Stop();
             MoveBlockDown();
+            scoreLbl.Text = "Score: " + score;
             timer.Start();
         }
 
@@ -151,6 +158,8 @@ namespace Tetris
                 rotationState--;
             }
         }
+
+
 
 
         public void DrawLBlock(int drawX, int drawY)
@@ -534,7 +543,7 @@ namespace Tetris
         public void MoveBlockLeft()
         {
 
-            if (IsInside(BlockCoordX[0] - 1, BlockCoordY[0]) == true || IsInside(BlockCoordX[1] - 1, BlockCoordY[0]) == true || IsInside(BlockCoordX[2] - 1, BlockCoordY[0]) == true || IsInside(BlockCoordX[3] - 1, BlockCoordY[0]) == true)
+            if (IsInside(BlockCoordX[0] - 1, BlockCoordY[0]) == true && IsInside(BlockCoordX[1] - 1, BlockCoordY[1]) == true && IsInside(BlockCoordX[2] - 1, BlockCoordY[2]) == true && IsInside(BlockCoordX[3] - 1, BlockCoordY[3]) == true)
             {
                 DeleteCurrentBlock();//Deletes the block at the old coordinate
                 for (int i = 0; i < 4; i++)
@@ -543,10 +552,15 @@ namespace Tetris
                 }
                 DrawBlock();
             }
+            else if (IsInside(BlockCoordX[0] - 1, BlockCoordY[0]) == false || IsInside(BlockCoordX[1] - 1, BlockCoordY[1]) == false || IsInside(BlockCoordX[2] - 1, BlockCoordY[2]) == false || IsInside(BlockCoordX[3] - 1, BlockCoordY[3]) == false)
+            {
+                DeleteCurrentBlock();//Deletes the block at the old coordinate
+                DrawBlock();
+            }
         }
         public void MoveBlockRight()
         {
-            if (IsInside(BlockCoordX[0] + 1, BlockCoordY[0]) == true || IsInside(BlockCoordX[1] + 1, BlockCoordY[0]) == true || IsInside(BlockCoordX[2] + 1, BlockCoordY[0]) == true || IsInside(BlockCoordX[3] + 1, BlockCoordY[0]) == true)
+            if (IsInside(BlockCoordX[0] + 1, BlockCoordY[0]) == true && IsInside(BlockCoordX[1] + 1, BlockCoordY[1]) == true && IsInside(BlockCoordX[2] + 1, BlockCoordY[2]) == true && IsInside(BlockCoordX[3] + 1, BlockCoordY[3]) == true)
             {
 
                 DeleteCurrentBlock();//Deletes the block at the old coordinate
@@ -554,6 +568,14 @@ namespace Tetris
                 {
                     BlockCoordX[i] += 1; //Increasing each X value by one translates the block one to the right
                 }
+                DrawBlock();
+            }
+            else if (IsInside(BlockCoordX[0] + 1, BlockCoordY[0]) == false ||
+                     IsInside(BlockCoordX[1] + 1, BlockCoordY[1]) == false ||
+                     IsInside(BlockCoordX[2] + 1, BlockCoordY[2]) == false ||
+                     IsInside(BlockCoordX[3] + 1, BlockCoordY[3]) == false)
+            {
+                DeleteCurrentBlock();
                 DrawBlock();
             }
         }
@@ -767,6 +789,16 @@ namespace Tetris
         void btnRight_Click(object sender, EventArgs e)
         {
             MoveBlockRight();
+        }
+
+        void btnStart_Click(object sender, EventArgs e)
+        {
+            gameStart = true;
+        }
+
+        void btnStop_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
 
         private void Form1_Load(object sender, EventArgs e)
