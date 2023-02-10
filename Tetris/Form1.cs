@@ -26,7 +26,7 @@ namespace Tetris
         Button rightBtn = new Button();
         Label scoreLbl = new Label();
         Label NextBlockSpawn = new Label();
-        public int score = 0;
+        public int score = 1;
         public static int[] BlockCoordX;//Using these to store current Coordinates of the block
         public static int[] BlockCoordY;
         int currentColour;
@@ -144,10 +144,10 @@ namespace Tetris
 
         public void DrawLBlock(int drawX, int drawY)
         {
-
+            int width = 4;
+            currentColour = 1;
             if (rotationState == 0)
             {
-                currentColour = 1;
                 BlockCoordX[0] = drawX;
                 BlockCoordY[0] = drawY;
                 BlockCoordX[1] = drawX;
@@ -156,50 +156,45 @@ namespace Tetris
                 BlockCoordY[2] = drawY + 2;
                 BlockCoordX[3] = drawX + 1;
                 BlockCoordY[3] = drawY + 2;
-                rotationState = +1;
+                rotationState++;
             }
-            if (rotationState == 1)
+            else if (rotationState == 1)
             {
-                BlockCoordX[0] = -1;
-                BlockCoordY[1] = -1;
-                BlockCoordX[2] = +1;
-                BlockCoordY[2] = -2;
-                BlockCoordX[3] = +2;
-                BlockCoordY[3] = -1;
+                BlockCoordX[0] += 1;
+                BlockCoordY[0] += 1;
+                BlockCoordX[2] -= 1;
+                BlockCoordY[2] -= 1;
+                BlockCoordX[3] -= 2;
+                rotationState++;
             }
             else if (rotationState == 2)
             {
-                BlockCoordY[0] = +2;
-                BlockCoordX[1] = -1;
-                BlockCoordY[1] = +1;
-                BlockCoordX[2] = -2;
-                BlockCoordX[3] = -1;
-                BlockCoordY[3] = -1;
+                BlockCoordX[0] -= 1;
+                BlockCoordY[1] -= 1;
+                BlockCoordX[2] += 1;
+                BlockCoordY[2] -= 2;
+                BlockCoordX[3] += 2;
+                BlockCoordY[3] -= 1;
+                rotationState++;
             }
             else if (rotationState == 3)
             {
-                BlockCoordX[0] = +2;
-                BlockCoordY[0] = -1;
-                BlockCoordX[1] = +1;
-                BlockCoordY[2] = +1;
-                BlockCoordX[3] = -1;
-            }
-            else if (rotationState == 4)
-            {
-                BlockCoordX[0] = -1;
-                BlockCoordY[0] = -1;
-                BlockCoordX[2] = +1;
-                BlockCoordY[2] = +1;
-                BlockCoordY[3] = +2;
-                rotationState = 0; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
+                BlockCoordX[0] -= 1;
+                BlockCoordY[1] += 1;
+                BlockCoordX[2] += 1;
+                BlockCoordY[2] += 2;
+                BlockCoordX[3] += 2;
+                BlockCoordY[3] += 1;
+                rotationState = 0;
             }
         }
 
         public void DrawJBlock(int drawX, int drawY)
         {
+            currentColour = 2;
+            int width = 4;
             if (rotationState == 0)
             {
-                currentColour = 2;
                 BlockCoordX[0] = drawX;
                 BlockCoordY[0] = drawY;
                 BlockCoordX[1] = drawX;
@@ -208,34 +203,37 @@ namespace Tetris
                 BlockCoordY[2] = drawY + 2;
                 BlockCoordX[3] = drawX - 1;
                 BlockCoordY[3] = drawY + 2;
-                rotationState = +1;
+                rotationState++;
             }
             else if (rotationState == 1)
             {
-                BlockCoordY[0] = +1;
-                BlockCoordX[1] = +1;
-                BlockCoordX[2] = +2;
-                BlockCoordY[2] = -1;
-                BlockCoordX[3] = +1;
-                BlockCoordY[3] = -2;
+                BlockCoordX[0] += 1;
+                BlockCoordY[0] += 2;
+                BlockCoordY[1] += 1;
+                BlockCoordX[2] -= 1;
+                BlockCoordY[3] -= 1;
+                rotationState++;
             }
             else if (rotationState == 2)
             {
-                BlockCoordX[0] = +1;
-                BlockCoordY[0] = +1;
-                BlockCoordX[2] = -1;
-                BlockCoordY[2] = -1;
-                BlockCoordX[3] = -2;
+                BlockCoordX[0] -= 1;
+                BlockCoordY[1] -= 1;
+                BlockCoordX[2] += 1;
+                BlockCoordY[2] -= 2;
+                BlockCoordX[3] += 2;
+                BlockCoordY[3] -= 1;
+                rotationState++;
             }
-            if (rotationState == 3)
+            else if (rotationState == 3)
             {
-                BlockCoordX[0] = +1;
-                BlockCoordY[0] = -2;
-                BlockCoordY[1] = -1;
-                BlockCoordX[2] = -1;
-                BlockCoordY[3] = +1;
+                BlockCoordX[0] -= 1;
+                BlockCoordY[0] -= 1;
+                BlockCoordX[2] += 1;
+                BlockCoordY[2] += 1;
+                BlockCoordY[3] += 2;
+                rotationState = 0;
             }
-            if (rotationState == 4)
+            /*else if (rotationState == 4)
             {
                 BlockCoordX[0] = -2;
                 BlockCoordX[1] = -1;
@@ -244,14 +242,14 @@ namespace Tetris
                 BlockCoordX[3] = +1;
                 BlockCoordY[3] = +1;
                 rotationState = 0; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
-            }
+            }*/
         }
         public void DrawSBlock(int drawX, int drawY)
         {
-
+            currentColour = 3;
+            int width = 4;
             if (rotationState == 0)
             {
-                currentColour = 3;
                 BlockCoordX[0] = drawX;
                 BlockCoordY[0] = drawY;
                 BlockCoordX[1] = drawX;
@@ -260,124 +258,136 @@ namespace Tetris
                 BlockCoordY[2] = drawY + 1;
                 BlockCoordX[3] = drawX + 1;
                 BlockCoordY[3] = drawY + 2;
-                rotationState = +1;
+                rotationState++;
             }
             else if (rotationState == 1)
             {
-                BlockCoordY[0] = -2;
-                BlockCoordX[1] = +1;
-                BlockCoordY[1] = -1;
-                BlockCoordX[3] = +1;
-                BlockCoordY[3] = +1;
+                BlockCoordX[0] += 2;
+                BlockCoordY[0] += 1;
+                BlockCoordX[1] += 1;
+                BlockCoordY[2] += 1;
+                BlockCoordX[3] -= 1;
+                rotationState++;
             }
             else if (rotationState == 2)
             {
-                BlockCoordY[0] = +2;
-                BlockCoordX[1] = -1;
-                BlockCoordY[1] = +1;
-                BlockCoordX[3] = -1;
-                BlockCoordY[3] = -1;
-                rotationState = 0; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
+                BlockCoordX[0] -= 2;
+                BlockCoordY[0] -= 1;
+                BlockCoordX[1] -= 1;
+                BlockCoordY[2] -= 1;
+                BlockCoordX[3] += 1;
+                rotationState = 1;
             }
+            /*else if (rotationState == 3)
+            {
+                BlockCoordX[0] += 2;
+                BlockCoordY[0] += 1;
+                BlockCoordX[1] += 1;
+                BlockCoordY[2] += 1;
+                BlockCoordX[3] -= 1;
+                rotationState = 2;
+            }*/
         }
         public void DrawZBlock(int drawX, int drawY)
         {
-
+            currentColour = 4;
+            int width = 4;
             if (rotationState == 0)
             {
-                currentColour = 4;
                 BlockCoordX[0] = drawX;
                 BlockCoordY[0] = drawY;
-                BlockCoordX[1] = drawX + 1;
-                BlockCoordY[1] = drawY;
-                BlockCoordX[2] = drawX + 1;
+                BlockCoordX[1] = drawX;
+                BlockCoordY[1] = drawY + 1;
+                BlockCoordX[2] = drawX - 1;
                 BlockCoordY[2] = drawY + 1;
-                BlockCoordX[3] = drawX + 2;
-                BlockCoordY[3] = drawY + 1;
-                rotationState = +1;
+                BlockCoordX[3] = drawX - 1;
+                BlockCoordY[3] = drawY + 2;
+                rotationState++;
             }
             else if (rotationState == 1)
             {
-                BlockCoordY[0] = -1;
-                BlockCoordX[1] = -1;
-                BlockCoordY[2] = +1;
-                BlockCoordX[3] = -1;
-                BlockCoordY[3] = +2;
+                BlockCoordY[0] += 2;
+                BlockCoordX[1] -= 1;
+                BlockCoordY[1] += 1;
+                BlockCoordX[3] -= 1;
+                BlockCoordY[3] -= 1;
+                rotationState++;
             }
             else if (rotationState == 2)
             {
-                BlockCoordY[0] = +1;
-                BlockCoordX[1] = +1;
-                BlockCoordY[2] = -1;
-                BlockCoordX[3] = +1;
-                BlockCoordY[3] = -2;
-                rotationState = 0; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
+                BlockCoordY[0] -= 2;
+                BlockCoordX[1] += 1;
+                BlockCoordY[1] -= 1;
+                BlockCoordX[3] += 1;
+                BlockCoordY[3] += 1;
+                rotationState = 1; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
             }
         }
         public void DrawOBlock(int drawX, int drawY)
         {
             currentColour = 5;
-            int width = 2;
-            int height = 2;
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    BlockCoordX[x] = drawX + x;
-                    BlockCoordY[y] = drawY + y;
-                }
-            }
+            int width = 4;
+            BlockCoordX[0] = drawX;
+            BlockCoordY[0] = drawY;
+            BlockCoordX[1] = drawX + 1;
+            BlockCoordY[1] = drawY;
+            BlockCoordX[2] = drawX;
+            BlockCoordY[2] = drawY + 1;
+            BlockCoordX[3] = drawX + 1;
+            BlockCoordY[3] = drawY + 1;
 
 
         }
         public void DrawTBlock(int drawX, int drawY)
         {
-
+            currentColour = 6;
+            int width = 4;
             if (rotationState == 0)
             {
-                currentColour = 6;
                 BlockCoordX[0] = drawX;
-                BlockCoordY[0] = drawY + 1;
-                BlockCoordX[1] = drawX + 1;
+                BlockCoordY[0] = drawY;
+                BlockCoordX[1] = drawX;
                 BlockCoordY[1] = drawY + 1;
                 BlockCoordX[2] = drawX + 1;
-                BlockCoordY[2] = drawY;
-                BlockCoordX[3] = drawX + 2;
-                BlockCoordY[3] = drawY + 1;
-                rotationState = +1;
+                BlockCoordY[2] = drawY + 1;
+                BlockCoordX[3] = drawX;
+                BlockCoordY[3] = drawY + 2;
+                rotationState++;
             }
             else if (rotationState == 1)
             {
-                BlockCoordX[0] = -2;
-                BlockCoordX[1] = -1;
-                BlockCoordY[1] = +1;
-                BlockCoordY[2] = +2;
+                // started to compress rotation code starting here, can get confusing with the coordinates. atleast it works.
+                BlockCoordX[0] -= 1;
+                BlockCoordY[0] += 1;
+                rotationState++;
             }
             else if (rotationState == 2)
             {
-                BlockCoordY[0] = +1;
-                BlockCoordX[1] = +1;
-                BlockCoordX[2] = +2;
-                BlockCoordY[2] = -1;
-                BlockCoordY[3] = -1;
+                BlockCoordX[2] -= 1;
+                BlockCoordY[2] -= 1;
+                rotationState++;
             }
             else if (rotationState == 3)
             {
-                BlockCoordX[0] = +1;
-                BlockCoordY[0] = +1;
-                BlockCoordX[2] = -1;
-                BlockCoordY[2] = -1;
-                BlockCoordX[3] = -1;
-                BlockCoordY[3] = +1;
+                BlockCoordX[3] += 1;
+                BlockCoordY[3] -= 1;
+                rotationState++;
             }
             else if (rotationState == 4)
             {
-                BlockCoordX[0] = +1;
-                BlockCoordY[0] = -2;
-                BlockCoordY[1] = -1;
-                BlockCoordX[2] = -1;
-                BlockCoordX[3] = +1;
-                rotationState = 0; // resets the rotation state to 0, so when rotate is pressed it iterate and rotation state will go to one therefor drawing the original rotation
+                BlockCoordX[0] += 1;
+                BlockCoordY[0] -= 1;
+                BlockCoordX[2] += 1;
+                BlockCoordY[2] += 1;
+                BlockCoordX[3] -= 1;
+                BlockCoordY[3] += 1;
+                rotationState = 1; 
+            }
+            else if (rotationState == 5)
+            {
+                BlockCoordX[0] -= 1;
+                BlockCoordY[0] += 1;
+                rotationState = 1;
             }
         }
 
@@ -476,7 +486,7 @@ namespace Tetris
 
             return true;
         }
-        public void NextBlock(object sender, EventArgs e)
+        public void NextBlock()
         {
             Random rdm = new Random();
             bool firstSpawn;//So that on first spawns the values are assigned
@@ -603,28 +613,33 @@ namespace Tetris
             }
             else if (currentColour == 1)
             {
-                DrawLBlock(BlockStartX, BlockStartY);
+                DeleteCurrentBlock();
+                DrawLBlock(BlockCoordX[0], BlockCoordY[0]);
                 DrawBlock();
             }
             else if (currentColour == 2)
             {
-                DrawJBlock(BlockStartX, BlockStartY);
+                DeleteCurrentBlock();
+                DrawJBlock(BlockCoordX[0], BlockCoordY[0]);
                 DrawBlock();
             }
             else if (currentColour == 3)
             {
-                DrawSBlock(BlockStartX, BlockStartY);
+                DeleteCurrentBlock();
+                DrawSBlock(BlockCoordX[0], BlockCoordY[0]);
                 DrawBlock();
             }
             else if (currentColour == 4)
             {
-                DrawZBlock(BlockStartX, BlockStartY);
+                DeleteCurrentBlock();
+                DrawZBlock(BlockCoordX[0], BlockCoordY[0]);
                 DrawBlock();
             }
             //No rotation for O block as it stays the same
             else if (currentColour == 6)
             {
-                DrawTBlock(BlockStartX, BlockStartY);
+                DeleteCurrentBlock();
+                DrawTBlock(BlockCoordX[0], BlockCoordY[0]);
                 DrawBlock();
             }
 
@@ -667,8 +682,8 @@ namespace Tetris
             rotationState = 0;
             BlockCoordX = new int[4];
             BlockCoordY = new int[4];
-            int blockSpawn = spawn;
-            //int blockSpawn = 1;
+            //int blockSpawn = spawn;
+            int blockSpawn = 6;
             if (blockSpawn == 0)
             {
                 DrawIBlock(BlockStartX, BlockStartY);
@@ -704,6 +719,7 @@ namespace Tetris
                 DrawTBlock(BlockStartX, BlockStartY);
                 DrawBlock();
             }
+            NextBlock();
         }
         void btnEvent_Click(object sender, EventArgs e)
         {
