@@ -20,6 +20,7 @@ namespace Tetris
         public static int gridWidth = 10;
         public static int gridRows = 20;
         public static int gridHeight = 20;
+        private bool firstPass = true;
         private Timer timer = new Timer();
         Button[,] gridBtn = new Button[gridColumns, gridRows];
         Button rotateBtn = new Button();
@@ -180,11 +181,10 @@ namespace Tetris
             else if (rotationState == 2)
             {
                 BlockCoordX[0] -= 1;
-                BlockCoordY[1] -= 1;
+                BlockCoordY[0] += 1;
                 BlockCoordX[2] += 1;
-                BlockCoordY[2] -= 2;
-                BlockCoordX[3] += 2;
-                BlockCoordY[3] -= 1;
+                BlockCoordY[2] -= 1;
+                BlockCoordY[3] -= 2;
                 rotationState++;
             }
             else if (rotationState == 3)
@@ -195,7 +195,16 @@ namespace Tetris
                 BlockCoordY[2] += 2;
                 BlockCoordX[3] += 2;
                 BlockCoordY[3] += 1;
-                rotationState = 0;
+                rotationState++;
+            }
+            else if (rotationState == 4)
+            {
+                BlockCoordX[0] += 1;
+                BlockCoordY[0] -= 2;
+                BlockCoordY[1] -= 1;
+                BlockCoordX[2] -= 1;
+                BlockCoordY[3] += 1;
+                rotationState = 1;
             }
         }
 
@@ -412,12 +421,12 @@ namespace Tetris
 
         private void MoveRowsDown(int row, int numRows)
         {
-            for (int x = 0; x < gridColumns; x++)
+            for (int x = 0; x < gridWidth; x++)
             {
                 Console.WriteLine(row + "  " + x);
-                Color setColor = gridBtn[row, x].BackColor;
-                gridBtn[row + numRows, x].BackColor = setColor;
-                gridBtn[row, x].BackColor = Color.PowderBlue;
+                Color setColor = gridBtn[x, row].BackColor;
+                gridBtn[x, row + numRows].BackColor = setColor;
+                gridBtn[x, row].BackColor = Color.PowderBlue;
             }
         }
 
@@ -425,7 +434,7 @@ namespace Tetris
         {
             int cleared = 0;
 
-            for (int x = gridColumns - 1; x >= 0; x--)
+            for (int x = gridRows - 1; x >= 0; x--)
             {
                 if (IsRowFull(x))
                 {
@@ -473,9 +482,9 @@ namespace Tetris
 
         public bool IsRowEmpty(int x)
         {
-            for (int y = 0; y < gridHeight; y++)
+            for (int y = 0; y < gridWidth; y++)
             {
-                if (!(gridBtn[x, y].BackColor.Equals(Color.PowderBlue)))
+                if (!(gridBtn[y, x].BackColor.Equals(Color.PowderBlue)))
                 {
                     return false;
                 }
@@ -486,9 +495,9 @@ namespace Tetris
 
         public bool IsRowFull(int x)
         {
-            for (int y = 0; y < gridHeight; y++)
+            for (int y = 0; y < gridWidth; y++)
             {
-                if (gridBtn[x, y].BackColor.Equals(Color.PowderBlue))
+                if (gridBtn[y,x].BackColor.Equals(Color.PowderBlue))
                 {
                     return false;
                 }
@@ -590,6 +599,8 @@ namespace Tetris
                 BlockCoordX[x] = 0;
                 BlockCoordY[x] = 0;
             }
+
+            score += ClearFullRows();
         }
 
         public void DeleteCurrentBlock()//Uses the block coordinates saved in an array to revert the block back to the base colour
@@ -692,7 +703,9 @@ namespace Tetris
             rotationState = 0;
             BlockCoordX = new int[4];
             BlockCoordY = new int[4];
+            NextBlock();
             int blockSpawn = spawn;
+
             //int blockSpawn = 6;
             if (blockSpawn == 0)
             {
