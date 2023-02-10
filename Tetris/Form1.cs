@@ -116,7 +116,6 @@ namespace Tetris
                     BlockCoordX[y] = drawX;
                     BlockCoordY[y] = drawY + y;
                 }
-                rotationState = +1; //so when rotate is pressed it skips 1 on the first iteration
                 return;
             }
             else if (rotationState == 1)
@@ -126,7 +125,6 @@ namespace Tetris
                     BlockCoordX[y] = (drawX - 1) + y;
                     BlockCoordY[y] = drawY;
                 }
-                rotationState = 0;
             }
             else if (rotationState == 2)
             {
@@ -528,15 +526,48 @@ namespace Tetris
         }
         public void MoveBlockDown()
         {
-            DeleteCurrentBlock();
-            if (BlockThere(BlockCoordX[0], BlockCoordY[0] + 1) == false || BlockThere(BlockCoordX[1], BlockCoordY[1] + 1) == false || BlockThere(BlockCoordX[2], BlockCoordY[2] + 1) == false || BlockThere(BlockCoordX[3], BlockCoordY[3] + 1) == false)
-                for (int i = 0; i < 4; i++)
+            if (BlockCoordY[0] + 1 == 20 || BlockCoordY[1] + 1 == 20 || BlockCoordY[2] + 1 == 20 ||
+                BlockCoordY[3] + 1 == 20)
+            {
+                SettleBlock();
+                BlockSpawn();
+                return;
+            }
+            if (BlockThere(BlockCoordX[0], BlockCoordY[0] + 1) == false ||
+                BlockThere(BlockCoordX[1], BlockCoordY[1] + 1) == false ||
+                BlockThere(BlockCoordX[2], BlockCoordY[2] + 1) == false ||
+                BlockThere(BlockCoordX[3], BlockCoordY[3] + 1) == false)
+            {
+                if (BlockThere(BlockCoordX[0], BlockCoordY[0] + 1) == true ||
+                    BlockThere(BlockCoordX[1], BlockCoordY[1] + 1) == true ||
+                    BlockThere(BlockCoordX[2], BlockCoordY[2] + 1) == true ||
+                    BlockThere(BlockCoordX[3], BlockCoordY[3] + 1) == true)
                 {
-                    BlockCoordY[i] += 1;//Increasing the Y coordinate means we can move the block down the grid
+                    SettleBlock();
+                    BlockSpawn();
+                    return;
                 }
-            DrawBlock();
-
+                else
+                {
+                    DeleteCurrentBlock();
+                    for (int i = 0; i < 4; i++)
+                    {
+                        BlockCoordY[i] += 1;//Increasing the Y coordinate means we can move the block down the grid
+                        DrawBlock();
+                    }
+                }
+            }
         }
+
+        public void SettleBlock()
+        {
+            for (int x = 0; x < 4; x++)
+            {
+                BlockCoordX[x] = 0;
+                BlockCoordY[x] = 0;
+            }
+        }
+
         public void DeleteCurrentBlock()//Uses the block coordinates saved in an array to revert the block back to the base colour
         {
             for (int i = 0; i < 4; i++)
