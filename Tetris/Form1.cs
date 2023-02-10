@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Tetris
 {
@@ -19,6 +20,7 @@ namespace Tetris
         public static int gridWidth = 10;
         public static int gridRows = 20;
         public static int gridHeight = 20;
+        private Timer timer = new Timer();
         Button[,] gridBtn = new Button[gridColumns, gridRows];
         Button rotateBtn = new Button();
         Button moveBtn = new Button();
@@ -102,12 +104,20 @@ namespace Tetris
             // GAME START
 
             // Creates a new block at the top of the grid.
-
-            // Square
+            bool gameLoop = true;
             BlockSpawn();
+            timer.Interval = 2000;
+            timer.Tick += new EventHandler(t_Tick);
+            Thread.Sleep(1500);
+            timer.Start();
 
-            Thread.Sleep(1000);
+        }
 
+        public void t_Tick(object sender, EventArgs e)
+        {
+            timer.Stop();
+            MoveBlockDown();
+            timer.Start();
         }
 
         public void DrawBlock()
@@ -682,8 +692,8 @@ namespace Tetris
             rotationState = 0;
             BlockCoordX = new int[4];
             BlockCoordY = new int[4];
-            //int blockSpawn = spawn;
-            int blockSpawn = 6;
+            int blockSpawn = spawn;
+            //int blockSpawn = 6;
             if (blockSpawn == 0)
             {
                 DrawIBlock(BlockStartX, BlockStartY);
